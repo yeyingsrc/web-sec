@@ -15,6 +15,8 @@
 - Java 方向：`EL / SPEL / OGNL / JNDI / 反序列化` -> `./exp/EXP-Expression-Injection.md`、`./exp/EXP-SPEL-Injection.md`、`./exp/EXP-OGNL-Injection.md`、`./exp/EXP-Java-Unserialize.md`
 - 权限与后渗透：`提权 / 会话 / 内网 / 隧道 / 痕迹清理` -> `./penetration/`
 - Windows 现场：`取凭证 / 提权 / 命令 / RDP / WinRM / WMI` -> `./penetration/PEN-GetHash.md`、`./penetration/PEN-WinCmd.md`
+- 内网横向与隧道：`impacket / 横向移动 / frp / chisel / Neo-reGeorg` -> `./penetration/PEN-Lateral.md`、`./penetration/PEN-Tunnel.md`
+- 云原生：`K8s / Docker逃逸 / AKSK / 元数据` -> `./exp/EXP-Container-Escape.md`、`./penetration/PEN-Cloud.md`
 - Linux 现场：`取凭证 / SUID / 本地提权 / 反弹 shell` -> `./penetration/PEN-GetHash-Linux.md`、`./penetration/PEN-Setuid-Linux.md`、`./penetration/PEN-Linux-LPE.md`、`./penetration/PEN-ReShell.md`
 
 ## 速查矩阵
@@ -28,7 +30,7 @@
 | 命令执行 | 参数进入系统命令或解释器 | [EXP-CI-PHP](./exp/EXP-CI-PHP.md) | `命令拼接` `RCE` `Runtime.exec` |
 | XXE | XML 解析器允许外部实体 | [EXP-XXE](./exp/EXP-XXE.md) | `外部实体` `文件读取` `SSRF` |
 | 文件上传 | 可上传可解析文件 + 校验薄弱 | [EXP-Upload](./exp/EXP-Upload.md) | `MIME` `后缀绕过` `解析差异` |
-| 反序列化 | 不可信数据进入反序列化入口 | [EXP-Java-Unserialize](./exp/EXP-Java-Unserialize.md) / [EXP-PHP-Unserialize](./exp/EXP-PHP-Unserialize.md) | `gadget` `JNDI` `POP` |
+| 反序列化 | 不可信数据进入反序列化入口 | [EXP-Java-Unserialize](./exp/EXP-Java-Unserialize.md) / [EXP-PHP-Unserialize](./exp/EXP-PHP-Unserialize.md) / [EXP-DotNet-Unserialize](./exp/EXP-DotNet-Unserialize.md) | `gadget` `JNDI` `POP` `ViewState` |
 | 原型链污染 | 可控键写入对象原型链 | [EXP-nodejs-proto](./exp/EXP-nodejs-proto.md) | `__proto__` `constructor.prototype` |
 | 越权 | 只验登录态 + 不验资源归属 | [EXP-IDOR](./exp/EXP-IDOR.md) | `水平越权` `垂直越权` `BOLA` |
 | JWT | 签名算法/密钥/声明校验缺陷 | [EXP-JWT](./exp/EXP-JWT.md) | `alg=none` `算法混淆` `弱密钥` `kid` |
@@ -38,6 +40,8 @@
 | GraphQL | 内省开放 + 接口拼装能力暴露 | [EXP-GraphQL](./exp/EXP-GraphQL.md) | `introspection` `alias` `mutation越权` |
 | 缓存投毒 | unkeyed 输入 + CDN 缓存键不完整 | [EXP-Cache-Poisoning](./exp/EXP-Cache-Poisoning.md) | `X-Cache` `unkeyed` `缓存欺骗` |
 | HPP | 参数重复提交 + 各层取值不一致 | [EXP-HPP](./exp/EXP-HPP.md) | `重复参数` `取值策略` `污染` |
+| 容器逃逸 | 容器内立足 + 特权/挂载/内核缺陷 | [EXP-Container-Escape](./exp/EXP-Container-Escape.md) | `privileged` `docker.sock` `hostPath` |
+| WAF绕过 | WAF 与后端解析不一致 | [EXP-WAF-Bypass](./exp/EXP-WAF-Bypass.md) | `分块传输` `编码差异` `tamper` |
 
 ## 使用建议
 - 做题或实战时，先定位“漏洞类别 -> 成立条件 -> 常见利用链 -> 防御点”。
@@ -75,6 +79,8 @@
     * [2.21 GraphQL安全](#221-graphql安全)
     * [2.22 缓存投毒与缓存欺骗](#222-缓存投毒与缓存欺骗)
     * [2.23 HTTP参数污染(HPP)](#223-http参数污染hpp)
+    * [2.24 容器逃逸](#224-容器逃逸)
+    * [2.25 WAF识别与绕过](#225-waf识别与绕过)
   * [0x03 代码审计篇(Audit)](#0x03-代码审计篇audit)
     * [3.1 PHP](#31-php)
     * [3.2 JAVA](#32-java)
@@ -207,6 +213,7 @@
 - [反序列化漏洞-Java](./exp/EXP-Java-Unserialize.md)
 > pickle序列化的是代码逻辑，拿到入口基本等于RCE
 - [反序列化漏洞-Python(pickle)](./exp/EXP-Python-Unserialize.md)
+- [反序列化漏洞-.NET（ViewState/Json.NET/BinaryFormatter）](./exp/EXP-DotNet-Unserialize.md)
 - [绕过高版本Jdk的限制进行Jndi注入利用](./exp/EXP-Java-Unserialize-Bypass-Jdk.md)    
 - [**[Tool]** 反序列化漏洞利用工具-Java ysoserial](https://github.com/frohoff/ysoserial)
 > 拓展payload和内存马
@@ -266,6 +273,14 @@
 ### 2.23 HTTP参数污染(HPP)
 > 参数重复提交 / 各层取值不一致 / 绕WAF与鉴权
 - [HTTP 参数污染（HPP）](./exp/EXP-HPP.md)
+
+### 2.24 容器逃逸
+> privileged / docker.sock / hostPath / 内核漏洞
+- [Docker/K8s 容器逃逸](./exp/EXP-Container-Escape.md)
+
+### 2.25 WAF识别与绕过
+> WAF指纹 / 分块传输 / 编码差异 / tamper组合
+- [WAF 识别与绕过](./exp/EXP-WAF-Bypass.md)
 
 ## 0x03 代码审计篇(Audit)
 
@@ -397,6 +412,7 @@
 - [**[Tool]** go-secdump 利用smb远程无文件落地获取@jfjallid](https://github.com/jfjallid/go-secdump)
 
 **提权:**    
+- [Windows 提权速查（Potato/服务/UAC Bypass/内核漏洞）](./penetration/PEN-Win-LPE.md)
 - [Windows提权检测工具 Windows Exploit Suggester](https://github.com/bitsadmin/wesng)
 > 已经停止更新到CVE-2018
 - [Windows提权漏洞集合@SecWiki](https://github.com/SecWiki/windows-kernel-exploits)
@@ -415,6 +431,7 @@
 
 #### 4.3.3 Docker&Sandbox逃逸
 
+- [容器逃逸速查（privileged/docker.sock/内核漏洞/K8s）](./exp/EXP-Container-Escape.md)
 - [Dokcer容器逃逸@duowen1](https://github.com/duowen1/Container-escape-exps)
 
 ### 4.4 权限维持&后门
@@ -462,6 +479,7 @@
 - [**[Tool]** 哥斯拉二次开发-WAF逃逸+免杀@kong030813](https://github.com/kong030813/Z-Godzilla_ekp)
 - 
 ### 4.6 隧道&代理
+> 选型决策与配置示例见 [内网穿透与代理工具速查](./penetration/PEN-Tunnel.md)（frp/nps/chisel/Neo-reGeorg）
 #### 4.6.1 TCP隧道
 - [SSH 端口转发&开socks5](./penetration/PEN-ssh.md)
 - [Iptables 端口复用](./penetration/PEN-Reuse.md)
@@ -486,6 +504,7 @@
 #### 4.7.1 内网信息获取&执行
 > 信息获取 & 远程文件操作 & 远程执行命令 & ipc$ & wmi & winrm
 - [Windows 主机常用命令](./penetration/PEN-WinCmd.md)
+- [内网横向移动速查（impacket/PsExec/WMI/WinRM/RDP）](./penetration/PEN-Lateral.md)
 > 超强神器，wmi,smb等执行脚本，python方便liunx使用
 - [**[Tool]** Impacket](https://github.com/fortra/impacket)
 > 可以提取流量中用户名&密码，NTML Hash，图片等，以及绘制网络拓扑。
@@ -502,6 +521,7 @@
 - [**[Tool]** Landon](https://github.com/k8gege/LadonGo)
 
 #### 4.7.3 渗透框架
+- [C2 框架速查（CobaltStrike/Sliver/MSF 选型）](./penetration/PEN-C2.md)
 - [**[Tool]** 后渗透利用神器 Metasploit](https://www.metasploit.com/)
 - [**[Tool]** 内网横向拓展系统 InScan](https://github.com/inbug-team/InScan)
 - [**[Tool]** 开源图形化内网渗透工具 Viper](https://github.com/FunnyWolf/Viper)

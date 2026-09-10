@@ -45,7 +45,7 @@
 | 组件 | 代表漏洞 | 备注 |
 | --- | --- | --- |
 | Confluence | CVE-2021-26084、CVE-2022-26134、CVE-2023-22515/22527 | [ConfluenceMemshell](https://github.com/Lotus6/ConfluenceMemshell) |
-| Exchange | ProxyLogon（CVE-2021-26855 SSRF+RCE）、ProxyShell | [EBurstGo](https://github.com/X1r0z/EBurstGo) 爆破 |
+| Exchange | ProxyLogon（CVE-2021-26855 SSRF+RCE）、ProxyShell、ViewState RCE（CVE-2020-0688） | [EBurstGo](https://github.com/X1r0z/EBurstGo) 爆破；ViewState 利用见 [EXP-DotNet-Unserialize](./EXP-DotNet-Unserialize.md) |
 | GitLab | 任意文件读取、RCE 系列 | CI/CD 场景高价值 |
 | Redis | 未授权访问、主从复制 RCE | [EXP-DB-Redis](./EXP-DB-Redis.md) |
 | 各类 VPN/网关 | 深信服、奇安信、Fortinet 等历史 RCE | 参考 [redteam_vul](https://github.com/r0eXpeR/redteam_vul) |

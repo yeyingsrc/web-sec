@@ -47,6 +47,9 @@
 | HPP | HTTP 参数污染、重复参数、参数污染 | `./exp/EXP-HPP.md` | `取值策略` `WAF 绕过` `参数重复` |
 | SSTI-Java | Java 模板注入、Freemarker/Velocity/Thymeleaf | `./exp/EXP-SSTI-Java.md` | `Execute` `__${}__` `TemplateClassResolver` |
 | SSTI-Node | Node.js 模板注入、EJS/Pug/Nunjucks/Handlebars | `./exp/EXP-SSTI-Node.md` | `outputFunctionName` `renderString` `沙箱逃逸` |
+| .NET反序列化 | ViewState、Json.NET、BinaryFormatter、ysoserial.net | `./exp/EXP-DotNet-Unserialize.md` | `machineKey` `TypeNameHandling` `ObjectStateFormatter` |
+| 容器逃逸 | Docker逃逸、K8s逃逸、privileged、docker.sock | `./exp/EXP-Container-Escape.md` | `hostPath` `release_agent` `runc` `CapEff` |
+| WAF绕过 | WAF指纹、分块传输、编码差异、tamper | `./exp/EXP-WAF-Bypass.md` | `wafw00f` `chunked` `安全狗` `雷池` |
 | 认证与会话 | Cookie、Session、OAuth、SSO | `./vul/VUL-Auth-Session.md` | `SameSite` `HttpOnly` `会话固定` |
 | 密码学误用 | ECB、CBC、Padding Oracle、弱随机 | `./vul/VUL-Crypto.md` | `长度扩展` `比特翻转` `硬编码密钥` |
 
@@ -55,10 +58,10 @@
 | --- | --- | --- |
 | 网络预置 | 代理、路由、信息收集 | `./penetration/PEN-Openwrt.md` `./penetration/PEN-Tun2socks.md` `./penetration/PEN-Info.md` |
 | 网络接入 | 扫描、漏洞验证、1day | `./penetration/PEN-Scanner.md` |
-| 权限获取 | 凭证、落地、提权 | `./penetration/PEN-GetHash.md` `./penetration/PEN-GetHash-Linux.md` `./penetration/PEN-Linux-LPE.md` |
+| 权限获取 | 凭证、落地、提权 | `./penetration/PEN-GetHash.md` `./penetration/PEN-GetHash-Linux.md` `./penetration/PEN-Linux-LPE.md` `./penetration/PEN-Win-LPE.md` |
 | 权限维持 | Shell、WebShell、MSF | `./penetration/PEN-ReShell.md` `./penetration/PEN-Webshell-Question.md` `./penetration/PEN-MSF.md` |
-| 隧道代理 | TCP、HTTP、DNS、ICMP | `./penetration/PEN-ssh.md` `./penetration/PEN-Reuse.md` |
-| 后渗透 | 内网信息、执行、域 | `./penetration/PEN-WinCmd.md` |
+| 隧道代理 | TCP、HTTP、DNS、ICMP | `./penetration/PEN-ssh.md` `./penetration/PEN-Reuse.md` `./penetration/PEN-Tunnel.md` |
+| 后渗透 | 内网信息、执行、域 | `./penetration/PEN-WinCmd.md` `./penetration/PEN-Lateral.md` `./penetration/PEN-C2.md` |
 | 域渗透 | 域信息收集、Kerberos 攻击 | `./penetration/PEN-BloodHound.md` `./penetration/PEN-Kerberos.md` |
 | 云平台 | AKSK 利用、metadata、对象存储 | `./penetration/PEN-Cloud.md` |
 | 反溯源 | 痕迹清理、隐藏 | `./penetration/PEN-LinuxClear.md` `./penetration/PEN-WinClear.md` |
